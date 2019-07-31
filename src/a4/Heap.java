@@ -268,6 +268,10 @@ public class Heap<E, P> implements PriorityQueue<E, P>{
 		return PriorityMap.get(e);
 	}
 	
+	public ArrayList<E> toArray(){
+		return HeapArray;
+	}
+	
 	/**
 	 * testing if the invariant of the heap class is maintained
 	 */

@@ -235,6 +235,8 @@ class HeapTest {
 				h.changePriority("c", 5);
 				assertEquals("c", h.peek());
 				System.out.println(h.toString());
+				
+				System.out.println(h.toArray());
 	}
 	
 	
