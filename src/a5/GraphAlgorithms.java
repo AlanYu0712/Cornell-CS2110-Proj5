@@ -118,7 +118,6 @@ public class GraphAlgorithms  {
 			
 			for (Map.Entry<N, Integer> entry : costStorage.entrySet()) {
 			    N mapKey = entry.getKey();
-//			    System.out.println("1");
 			    cost = entry.getValue();
 			}
 			
@@ -126,80 +125,86 @@ public class GraphAlgorithms  {
 				E neighbor = I.next();
 				int actualCost = neighbor.label()+cost;
 
+//				
+//				System.out.println("new visited:"+visited);
+//				System.out.println("place:"+neighbor.target());
 				
-				System.out.println("new visited:"+visited);
-				System.out.println("place:"+neighbor.target());
 				if(!visited.contains(neighbor.target())) {
-					System.out.println("actual:"+actualCost);
-					System.out.println("ed"+candidate.getPriority(neighbor.target()));
 					if(!candidate.toArray().contains(neighbor.target())){
 						candidate.add(neighbor.target(), actualCost);
 					}else {
-						System.out.println("actual:"+actualCost);
-						System.out.println("ed"+candidate.getPriority(neighbor.target()));
+//						System.out.println("actual:"+actualCost);
+//						System.out.println("ed"+candidate.getPriority(neighbor.target()));
 						if(candidate.getPriority(neighbor.target())>actualCost) {
+//							System.out.println("RAN SUB!");
 							candidate.changePriority(neighbor.target(), actualCost);
-					}
-
+						}
+//						System.out.println("I am Fin: "+candidate.getPriority(neighbor.target()));
 				}
 					
-					System.out.println("candi"+candidate.toString());
+//					System.out.println("candi"+candidate.toString());
 					
 				}
 			
 			}
 			
 			heir=candidate.peek();
-			System.out.println("heir:"+heir);
+//			System.out.println("heir:"+heir);
 			costStorage.put(heir, candidate.getPriority(candidate.peek()));
-			System.out.println(candidate.getPriority(candidate.peek()));
+//			System.out.println(candidate.getPriority(candidate.peek()));
 			
 			
 			
 			for (Map.Entry<N, Integer> entry : costStorage.entrySet()) {
 			    N mapKey = entry.getKey();
-//			    System.out.println("Key = " + mapKey + ", Value = " + entry.getValue());
+
 			    cost = entry.getValue();
 			}
-			System.out.println(cost);
+//			System.out.println("last cost"+cost);
 			
 			Iterator<? extends E> O=heir.incoming().values().iterator();
 			while(O.hasNext()) {
 				E trace = O.next();
 				
 				int difference = cost-trace.label();
-				System.out.println("label is: "+trace.label());
-				System.out.println("difference is:"+difference);
-				
-				System.out.println("collection:"+costStorage);
+//				System.out.println("label is: "+trace.label());
+//				System.out.println("difference is:"+difference);
+//				
+//				System.out.println("collection:"+costStorage);
+//				
+//				System.out.println("label:"+trace.label()+" of "+trace.source());
+//				System.out.println("the match value:"+costStorage.get(trace.source()));
 				
 				if(costStorage.containsValue(difference)&&visited.contains(trace.source()))
-					Pred.put(heir, trace.source());			
+					if(costStorage.get(trace.source())==difference) {
+						Pred.put(heir, trace.source());			
+//						System.out.println("the source added is:"+trace.source());
+					}
 			}
 			
-			System.out.println("pred"+Pred.toString());
+//			System.out.println("pred"+Pred.toString());
 			
 			visited.add(candidate.poll());
-			System.out.println(heir);
+//			System.out.println(heir);
 				
 			if(candidate==null||heir.equals(end)) {
 				guard=false;
 			}
 		}
 		
-		System.out.println("Final p"+Pred.toString());
+//		System.out.println("Final p"+Pred.toString());
 		
-		N detect=Pred.get(heir);
+		N i=heir;
 		
-		result.add(heir);
+		N detect=Pred.get(i);
 		
-		while(heir!=Pred.get(heir)) {
+		result.add(i);
+		
+		while(i!=Pred.get(i)) {
 			result.add(detect);		
-			heir=detect;
-			detect=Pred.get(heir);
-//			System.out.println("finheir:"+heir);
-//			System.out.println("findetec:"+detect);
-			if(heir.equals(detect))
+			i=detect;
+			detect=Pred.get(i);
+			if(i.equals(detect))
 				break;
 		}
 		
@@ -208,7 +213,7 @@ public class GraphAlgorithms  {
 		Collections.reverse(result);
 //		result.remove(0);
 		
-		System.out.println(result);
+//		System.out.println(result);
 		
 		return result;
 		
@@ -256,6 +261,7 @@ public class GraphAlgorithms  {
 //				}
 //			}
 //		return Path;
+//	    System.out.println("Key = " + mapKey + ", Value = " + entry.getValue());
 	}
 	
 }

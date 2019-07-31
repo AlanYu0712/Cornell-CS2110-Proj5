@@ -104,6 +104,7 @@ public class PathsTester {
 		Graph g= getGraph("info/Maps/Board3.txt");
 		PathData pd= new PathData("info/Maps/Board3distances.txt", g);
 		assertEquals(10, pd.size);
+		System.out.println("-----Board3------");
 		checkAllShortestPaths(g, pd);
 	}
 
@@ -113,6 +114,7 @@ public class PathsTester {
 		Graph g= getGraph("info/Maps/TestBoard2.txt");
 		PathData pd= new PathData("info/Maps/TestBoard2distances.txt", g);
 		assertEquals(34, pd.size);
+		System.out.println("------Board2------");
 		checkAllShortestPaths(g, pd);
 	}
 
@@ -122,6 +124,7 @@ public class PathsTester {
 		Graph g= getGraph("info/Maps/seed128.txt");
 		PathData pd= new PathData("info/Maps/seed128distances.txt", g);
 		assertEquals(50, pd.size);
+		System.out.println("------Seed128------");
 		checkAllShortestPaths(g, pd);
 	}
 
