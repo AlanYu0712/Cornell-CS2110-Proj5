@@ -61,6 +61,7 @@ public class GraphAlgorithms  {
 	 */
 	public static <N extends Node<N,E>, E extends LabeledEdge<N,E,Integer>>
 	List<N> shortestPath(N start, N end) {
+		
 		System.out.println("s"+start+"N"+end);
 		
 		Comparator<Integer> c = new Comparator<Integer>() {
@@ -96,6 +97,11 @@ public class GraphAlgorithms  {
 		if(start.equals(end)) {
 			guard=false;
 			result.add(start);
+			return result;
+		}
+		
+		if(!dfs(start).contains(end)) {
+			guard=false;
 			return result;
 		}
 		
@@ -167,7 +173,7 @@ public class GraphAlgorithms  {
 				
 				System.out.println("collection:"+costStorage);
 				
-				if(costStorage.containsValue(difference))
+				if(costStorage.containsValue(difference)&&visited.contains(trace.source()))
 					Pred.put(heir, trace.source());			
 			}
 			
@@ -193,15 +199,14 @@ public class GraphAlgorithms  {
 			detect=Pred.get(heir);
 //			System.out.println("finheir:"+heir);
 //			System.out.println("findetec:"+detect);
-//			System.out.println(heir==detect);
-			if(heir==detect)
+			if(heir.equals(detect))
 				break;
 		}
 		
 		
 		
 		Collections.reverse(result);
-		result.remove(0);
+//		result.remove(0);
 		
 		System.out.println(result);
 		
