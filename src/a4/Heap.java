@@ -264,6 +264,9 @@ public class Heap<E, P> implements PriorityQueue<E, P>{
 		}
 		return res + "]";
 	}
+	public P getPriority(E e) {
+		return PriorityMap.get(e);
+	}
 	
 	/**
 	 * testing if the invariant of the heap class is maintained

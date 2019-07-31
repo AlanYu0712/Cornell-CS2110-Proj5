@@ -197,6 +197,46 @@ class HeapTest {
 		
 }
 	
+	@Test
+	void myTest() {
+		//create an instance of string
+				Comparator<Integer> cmp = new IntComparator();
+				Heap<String, Integer> h = new Heap<String, Integer>(cmp);
+				
+				//testing add method in different situations
+				System.out.println(h.size());
+				h.add("a", 2);
+				System.out.println(h.size());
+				h.add("b", 1);		
+				System.out.println("current size"+h.size());
+				h.add("c", 3);
+				System.out.println(h.size());		
+				h.add("d", 5);
+				
+				//check the size method
+				assertEquals(4, h.size());
+				
+				//check the pick method
+				assertEquals("d", h.peek());
+				
+				//another scenario of the adding method
+				h.add("e", 4);
+				
+				
+				//checking is adding method validating
+				assertEquals("d", h.peek());
+				
+				//checking the poll method
+				assertEquals("d", h.poll());		
+				assertEquals(4, h.size());
+				assertEquals("e", h.peek());
+				
+				//checking the change priority method
+				h.changePriority("c", 5);
+				assertEquals("c", h.peek());
+				System.out.println(h.toString());
+	}
+	
 	
 	
 	

@@ -1,11 +1,16 @@
 package a5;
 
 import java.util.ArrayList;
+
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.Stack;
 
+import a4.Heap;
 import common.NotImplementedError;
 import graph.Edge;
 import graph.Node;
@@ -51,7 +56,64 @@ public class GraphAlgorithms  {
 	 */
 	public static <N extends Node<N,E>, E extends LabeledEdge<N,E,Integer>>
 	List<N> shortestPath(N start, N end) {
-		throw new NotImplementedError();
+		Comparator<Integer> c = new Comparator<Integer>() {
+
+			@Override
+			public int compare(Integer o1, Integer o2) {
+				// TODO Auto-generated method stub
+				if(o1>o2)
+					return 1;
+				else if(o1<o2)
+					return -1;
+				else {
+					return 0;
+				}
+			}
+		};
+		
+		int Path_Lenght = 0;
+		Heap<N,Integer> h= new Heap<N,Integer>(c);
+		ArrayList<N> Path= new ArrayList<N>();
+		if(start.equals(end)) {
+			Path.add(start);
+			return Path;
+		}
+		h.add(start, 0);
+			while(!(start.equals(end))) {   
+			      
+				Path.add(start); 
+		
+				Iterator<? extends E> I=start.outgoing().values().iterator();
+				if(I.hasNext()==false) {
+					 ArrayList<N> a =new ArrayList<N>();
+					 return a;
+				}
+					while(I.hasNext()) {
+						E e= I.next();
+						if(e.target().equals(end)) {
+							Path.add(end);
+							return Path; 
+						}
+						try {
+						h.add(e.target(),-(e.label()+Path_Lenght));
+						}
+						catch(IllegalArgumentException i) {
+							h.changePriority(e.target(),-(e.label()+Path_Lenght) );
+						}
+					}
+				try {
+				Path_Lenght = Path_Lenght- h.getPriority(h.peek());
+				start=h.poll(); 
+				}
+				catch(NoSuchElementException e) {
+					break;
+				}
+				if(start.equals(end)) {
+					Path.add(start);
+					return Path;
+				}
+			}
+		return Path;
 	}
 	
 }
