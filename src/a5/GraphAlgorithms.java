@@ -62,8 +62,9 @@ public class GraphAlgorithms  {
 	public static <N extends Node<N,E>, E extends LabeledEdge<N,E,Integer>>
 	List<N> shortestPath(N start, N end) {
 		
-		System.out.println("s"+start+"N"+end);
+		System.out.println("Start:"+start+" End:"+end);
 		
+		//set comparator for the smallest the number the larger the priority
 		Comparator<Integer> c = new Comparator<Integer>() {
 
 			@Override
@@ -79,27 +80,31 @@ public class GraphAlgorithms  {
 			}
 		};
 		
-		Heap<N, Integer> candidate = new Heap<N, Integer>(c);
-		ArrayList<N> visited = new ArrayList<N>();
-		LinkedHashMap<N, Integer> costStorage = new LinkedHashMap<N, Integer>();
-		HashMap<N, N> Pred=new HashMap<N, N>();
-		ArrayList<N> result = new ArrayList<N>();
+		//Setting up basic variables and collection
+		Heap<N, Integer> candidate = new Heap<N, Integer>(c); //stores all the neighbors available 
+		ArrayList<N> visited = new ArrayList<N>(); //store the nodes that were visited
+		LinkedHashMap<N, Integer> costStorage = new LinkedHashMap<N, Integer>(); //store the history of the cost when visiting each node
+		HashMap<N, N> Pred=new HashMap<N, N>(); //The predecessor/parent node of a node, use to trace end to start
+		ArrayList<N> result = new ArrayList<N>(); //organized list of path that is to be returned
 		
-		N heir=start;
-		boolean guard = true;
-		costStorage.put(start, 0);
-		Pred.put(start, start);
-		visited.add(start);
-		int cost=0;
+		//initialize variables and collections
+		N heir=start; //The current node it is on
+		boolean guard = true; //runs the main loop
+		costStorage.put(start, 0); //initialize the first data of the the cost Storage
+		Pred.put(start, start); //initialize the first data of the Pred relation collection
+		visited.add(start); //initial start is visited
+		int cost=0; //the current cost of from start to the current node
 		
 
 		
+		//if start is end, return the node start/end
 		if(start.equals(end)) {
 			guard=false;
 			result.add(start);
 			return result;
 		}
 		
+		//if start and end is not connected, return empty path list
 		if(!dfs(start).contains(end)) {
 			guard=false;
 			return result;
@@ -107,63 +112,70 @@ public class GraphAlgorithms  {
 		
 		
 		
-//		candidate.add(heir, 0);
-		
-		
-		
+		//start searching neighbors and preserve the node with the edge with least weight
 		while(guard) {
 			
 			Iterator<? extends E> I=heir.outgoing().values().iterator();
 			
-			
+			//get the last value of the costStorage collection
 			for (Map.Entry<N, Integer> entry : costStorage.entrySet()) {
 			    N mapKey = entry.getKey();
 			    cost = entry.getValue();
 			}
 			
+			//loop through all possible neighbors
 			while(I.hasNext()) {
 				E neighbor = I.next();
 				int actualCost = neighbor.label()+cost;
-
-//				
+			
 //				System.out.println("new visited:"+visited);
 //				System.out.println("place:"+neighbor.target());
 				
+				//if visited list doesn't contains neighbor(this neighbor is not visited)
 				if(!visited.contains(neighbor.target())) {
+					
+					//if neighbor is not stored in the candidate least
 					if(!candidate.toArray().contains(neighbor.target())){
+						
 						candidate.add(neighbor.target(), actualCost);
 					}else {
-//						System.out.println("actual:"+actualCost);
-//						System.out.println("ed"+candidate.getPriority(neighbor.target()));
+						//compare with the priority of the recorded neighbor, and replace is cost to node is smaller
+						
+//						System.out.println("current actual cost:"+actualCost);
+//						System.out.println("recorded cost:"+candidate.getPriority(neighbor.target()));
+						
 						if(candidate.getPriority(neighbor.target())>actualCost) {
-//							System.out.println("RAN SUB!");
+							
 							candidate.changePriority(neighbor.target(), actualCost);
 						}
 //						System.out.println("I am Fin: "+candidate.getPriority(neighbor.target()));
-				}
+					}
 					
-//					System.out.println("candi"+candidate.toString());
-					
+//					System.out.println("candidate is "+candidate.toString());				
 				}
 			
 			}
 			
+			//set the lowest cost node as the current node
 			heir=candidate.peek();
 //			System.out.println("heir:"+heir);
+			
+			//add new data cost Storage with cost to heir (current node)
 			costStorage.put(heir, candidate.getPriority(candidate.peek()));
-//			System.out.println(candidate.getPriority(candidate.peek()));
-			
-			
-			
+					
+			//get the current cost to current node (heir)
 			for (Map.Entry<N, Integer> entry : costStorage.entrySet()) {
+				
 			    N mapKey = entry.getKey();
-
 			    cost = entry.getValue();
 			}
-//			System.out.println("last cost"+cost);
 			
+			//iterator for the incoming edges of the current node(heir)
 			Iterator<? extends E> O=heir.incoming().values().iterator();
+			
+			//find predecessor for the current node(heir)
 			while(O.hasNext()) {
+				
 				E trace = O.next();
 				
 				int difference = cost-trace.label();
@@ -175,6 +187,7 @@ public class GraphAlgorithms  {
 //				System.out.println("label:"+trace.label()+" of "+trace.source());
 //				System.out.println("the match value:"+costStorage.get(trace.source()));
 				
+				//matches with data
 				if(costStorage.containsValue(difference)&&visited.contains(trace.source()))
 					if(costStorage.get(trace.source())==difference) {
 						Pred.put(heir, trace.source());			
@@ -182,25 +195,29 @@ public class GraphAlgorithms  {
 					}
 			}
 			
-//			System.out.println("pred"+Pred.toString());
+//			System.out.println("predecessor collection"+Pred.toString());
 			
+			//add current node(heir) to visited, remove it from the candidate collection
 			visited.add(candidate.poll());
-//			System.out.println(heir);
-				
+			
+			//break loop if ran all possible neighbors
 			if(candidate==null||heir.equals(end)) {
 				guard=false;
 			}
 		}
 		
-//		System.out.println("Final p"+Pred.toString());
+//		System.out.println("Final predecessor collection"+Pred.toString());
 		
+		//substitute i for heir
 		N i=heir;
 		
 		N detect=Pred.get(i);
 		
 		result.add(i);
 		
+		//use key->value->key to organize the final pathway
 		while(i!=Pred.get(i)) {
+			
 			result.add(detect);		
 			i=detect;
 			detect=Pred.get(i);
@@ -208,60 +225,10 @@ public class GraphAlgorithms  {
 				break;
 		}
 		
-		
-		
+		//reverse result pathways to start --> end
 		Collections.reverse(result);
-//		result.remove(0);
-		
-//		System.out.println(result);
 		
 		return result;
-		
-		
-//		int Path_Lenght = 0;
-//		Heap<N,Integer> h= new Heap<N,Integer>(c);
-//		ArrayList<N> Path= new ArrayList<N>();
-//		if(start.equals(end)) {
-//			Path.add(start);
-//			return Path;
-//		}
-//		h.add(start, 0);
-//			while(!(start.equals(end))) {   
-//			      
-//				Path.add(start); 
-//		
-//				Iterator<? extends E> I=start.outgoing().values().iterator();
-//				if(I.hasNext()==false) {
-//					 ArrayList<N> a =new ArrayList<N>();
-//					 return a;
-//				}
-//					while(I.hasNext()) {
-//						E e= I.next();
-//						if(e.target().equals(end)) {
-//							Path.add(end);
-//							return Path; 
-//						}
-//						try {
-//						h.add(e.target(),-(e.label()+Path_Lenght));
-//						}
-//						catch(IllegalArgumentException i) {
-//							h.changePriority(e.target(),-(e.label()+Path_Lenght) );
-//						}
-//					}
-//				try {
-//				Path_Lenght = Path_Lenght- h.getPriority(h.peek());
-//				start=h.poll(); 
-//				}
-//				catch(NoSuchElementException e) {
-//					break;
-//				}
-//				if(start.equals(end)) {
-//					Path.add(start);
-//					return Path;
-//				}
-//			}
-//		return Path;
-//	    System.out.println("Key = " + mapKey + ", Value = " + entry.getValue());
 	}
 	
 }
